@@ -3,12 +3,12 @@ class trainingSeries {
   String? image;
 
   String? name;
-  String? desc;
+  String? coachName;
 
   trainingSeries.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    name = json['name'];
+    name = json['seriesName'];
     image = json['image'];
-    desc = json['description'];
+    coachName = json['coachesNames'];
   }
 }

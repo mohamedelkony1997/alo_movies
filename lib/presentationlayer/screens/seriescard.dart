@@ -17,7 +17,7 @@ class SeriesCard extends StatelessWidget {
        SizedBox(height: 20,),
         Container(
           width: 200,
-          child: Text("${series.desc}",style: TextStyle(fontSize: 12,))),
+          child: Text("${series.coachName}",style: TextStyle(fontSize: 12,))),
       ]),
     );
   }

@@ -1,64 +1,87 @@
 import 'package:alo_movies/bussiness_logic/cubit/trainingSeries_cubit.dart';
 import 'package:alo_movies/data/models/trainingSeries.dart';
+import 'package:alo_movies/presentationlayer/screens/ClassesPage..dart';
+ // Fixed the import path
+import 'package:alo_movies/presentationlayer/screens/CommunityPage.dart'; // Fixed the import path
+import 'package:alo_movies/presentationlayer/screens/OverviewVideos.dart'; // Fixed the import path
 import 'package:alo_movies/presentationlayer/screens/seriescard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class SeriesScreen extends StatefulWidget {
-  
-  const SeriesScreen({super.key});
+  const SeriesScreen({Key? key}) : super(key: key); // Fixed the constructor
 
   @override
   State<SeriesScreen> createState() => _SeriesScreenState();
 }
 
 class _SeriesScreenState extends State<SeriesScreen> {
-  late List<trainingSeries> allseries;
+  late List<trainingSeries> allseries; // Fixed the type name
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    allseries = BlocProvider.of<trainingSeriesCubit>(context).getAllCharcters();
+    allseries = BlocProvider.of<trainingSeriesCubit>(context).getAllCharcters(); // Fixed the type name
   }
 
-  Widget buildblockWidget() {
-    return BlocBuilder<trainingSeriesCubit, trainingSeriesState>(
+  int _selectedPage = 0;
+
+  Widget buildBlockWidget() {
+    return BlocBuilder<trainingSeriesCubit, trainingSeriesState>( // Fixed the type name
       builder: (context, state) {
-        if (state is trainingSeriesLoaded) {
+        if (state is trainingSeriesLoaded) { // Fixed the type name
           allseries = (state).series;
-          return buildloadedSeries();
+          return buildLoadedSeries();
         } else {
-          return loadedSeriesIndacator();
+          return loadedSeriesIndicator(); // Fixed the method name
         }
       },
     );
   }
 
-  Widget buildloadedSeries() {
-    return Column(children: [
-      SizedBox(
-        height: MediaQuery.of(context).size.height / 2,
-        child: ListView.builder(
-          itemCount: allseries.length,
-          physics: AlwaysScrollableScrollPhysics(),
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) => SeriesCard(series: allseries[index])
-        ),
+  Widget buildLoadedSeries() {
+    return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
+      child: Column(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 2,
+            child: ListView.builder(
+              itemCount: allseries.length,
+              physics: AlwaysScrollableScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) => SeriesCard(series: allseries[index]),
+            ),
+          ),
+          ToggleSwitch(
+            initialLabelIndex: 0,
+            totalSwitches: 3,
+            labels: ['Overview', 'Classes', 'Community'],
+            onToggle: (index) {
+              setState(() {
+                _selectedPage = index!;
+              });
+            },
+          ),
+          SizedBox(
+               height: MediaQuery.of(context).size.height / 2.5,
+            child: ListView(
+              children: [
+                if (_selectedPage == 0)
+                  OverviewVideos()
+                else if (_selectedPage == 1)
+                  ClassesPage()
+                else if (_selectedPage == 2)
+                  CommunityPage(),
+              ],
+            ),
+          ),
+        ],
       ),
-      // Here, default theme colors are used for activeBgColor, activeFgColor, inactiveBgColor and inactiveFgColor
-ToggleSwitch(
-  initialLabelIndex: 0,
-  totalSwitches: 3,
-  labels: ['Overview', 'Classes', 'Community'],
-  onToggle: (index) {
-    print('switched to: $index');
-  },
-),
-    ]);
+    );
   }
 
-  Widget loadedSeriesIndacator() {
+  Widget loadedSeriesIndicator() {
     return Center(
       child: CircularProgressIndicator(),
     );
@@ -67,9 +90,10 @@ ToggleSwitch(
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-          appBar: AppBar(title: Text("AloMoves App"),centerTitle: true),
-      body: buildblockWidget(),
-    ));
+      child: Scaffold(
+        appBar: AppBar(title: Text("AloMoves App"), centerTitle: true),
+        body: buildBlockWidget(),
+      ),
+    );
   }
 }
